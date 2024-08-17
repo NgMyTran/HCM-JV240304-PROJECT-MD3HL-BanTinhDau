@@ -4,15 +4,27 @@ import design.IDesign;
 import entity.Catalog;
 import util.IOFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class CatalogDesignImpl implements IDesign<Catalog, Integer> {
 
     private static List<Catalog> catalogList;
+
     static {
         catalogList = IOFile.readFromFile(IOFile.CATALOG_PATH);
+        if (catalogList == null|| catalogList.isEmpty()) {
+            catalogList = new ArrayList<>(); // Khởi tạo danh sách nếu file không tồn tại hoặc rỗng
+        }
     }
+//public CatalogDesignImpl() {
+//    catalogList = IOFile.readFromFile(IOFile.CATALOG_PATH);
+//    System.out.println("du lieu trong catalogList  ");
+//    System.out.println();
+//};
+
+
 
     @Override
     public List<Catalog> getAll() {
@@ -21,41 +33,53 @@ public class CatalogDesignImpl implements IDesign<Catalog, Integer> {
 
     @Override
     public void save(Catalog catalog) {
-        if (catalog.getId() == 0) {
-            // New catalog, assign a new ID
-            catalog.setId(getNewId());
-            catalogList.add(catalog);
-        } else {
-            // Existing catalog, update the information
-            for (int i = 0; i < catalogList.size(); i++) {
-                if (catalogList.get(i).getId() == catalog.getId()) {
-                    catalogList.set(i, catalog);
-                    break;
+        if (catalog.isStatus()) {// Chỉ lưu danh mục nếu nó còn hoạt động
+            if (findById(catalog.getCatalogId()) == null) {
+                catalog.setCatalogId(getNewId());
+                catalog.setStatus(true);
+                catalogList.add(catalog);
+            } else {
+                for (int i = 0; i < catalogList.size(); i++) {
+                    if (catalogList.get(i).getCatalogId() == catalog.getCatalogId()) {
+                        catalogList.set(i, catalog);
+                        break;
+                    }
                 }
             }
+            IOFile.writeToFile(catalogList, IOFile.CATALOG_PATH);
         }
-        IOFile.writeToFile(catalogList, IOFile.CATALOG_PATH);
     }
 
     @Override
-    public Catalog findById(Integer id) {
-        return catalogList.stream()
-                .filter(catalog -> catalog.getId() == id)
-                .findFirst()
-                .orElse(null);
+    public Catalog findById(Integer integer) {
+        for (Catalog c : catalogList) {
+            if (c.getCatalogId() == integer) {
+                return c;
+            }
+        }
+        return null;
     }
 
     @Override
-    public void delete(Integer id) {
-        catalogList.removeIf(catalog -> catalog.getId() == id);
-        IOFile.writeToFile(catalogList, IOFile.CATALOG_PATH);
+    public void delete(Integer integer) {
+        if (findById(integer) != null) {
+            catalogList.remove(findById(integer));
+            IOFile.writeToFile(catalogList, IOFile.CATALOG_PATH);
+        } else {
+            System.err.println("Không có mục lục này");
+        }
     }
 
-    // Method to get a new ID for a catalog
-    private int getNewId() {
-        return catalogList.stream()
-                .mapToInt(Catalog::getId)
-                .max()
-                .orElse(0) + 1;
+    public int getNewId() {
+        int idMax = 0;
+        for (int i=0; i< catalogList.size() ;i++) {
+            Catalog c = catalogList.get(i);
+            if (c.getCatalogId() > idMax) {
+                idMax = c.getCatalogId();
+            }
+        }
+        return idMax + 1;
     }
+
+
 }

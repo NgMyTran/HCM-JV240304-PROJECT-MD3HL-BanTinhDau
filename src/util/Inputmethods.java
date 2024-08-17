@@ -141,7 +141,7 @@ public class Inputmethods {
         }
     }
 
-    public static Integer getPosituveNumber() {
+    public static Integer getPositionNumber() {
         while (true) {
             int result = getInteger();
             if (result <= 0) {

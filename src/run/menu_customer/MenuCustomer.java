@@ -8,10 +8,11 @@ import util.IOFile;
 import util.Inputmethods;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class MenuCustomer {
     static CustomerDesignImpl customerDesign = new CustomerDesignImpl();
-//    private static boolean isLoggedIn = false;
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void menuCustomer() {
 
@@ -21,8 +22,8 @@ public class MenuCustomer {
         }
 
         while (true) {
-            boolean isLoggedIn = IOFile.readCusName() != null;
 
+            boolean isLoggedIn = IOFile.readCusName() != null;
 
             System.out.println("╔══════════════════════════════════════════════════════════════════╗");
             System.out.println("  Chào mừng " + "( " + customerName + " )" + " đến cửa hàng để mua sắm ");
@@ -46,6 +47,7 @@ public class MenuCustomer {
 
             printMenuItem(12, "Thanh toán");
             System.out.println("╚══════════════════════════════════════════════════════════════════╝");
+            System.out.println("");
             System.out.print("Nhập lựa chọn của bạn: ");
             byte choice = Inputmethods.getByte();
             switch (choice) {
@@ -67,10 +69,10 @@ public class MenuCustomer {
                     displayCusInfo();
                     break;
                 case 7:
-//                updateUserInfo();
+                    updateCusInfo();
                     break;
                 case 8:
-//                changePassword();
+                changePassword();
                     break;
                 case 9:
                     register();
@@ -90,14 +92,12 @@ public class MenuCustomer {
             }
         }
     }
-
     private static void printMenuItem(int number, String text) {
         String format = String.format("║  %2d. %-15s", number, text);
         int paddingLength = 67 - format.length();
         String padding = repeatString(" ", paddingLength);
         System.out.println(format + padding + "║");
     }
-
     private static String repeatString(String str, int count) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < count; i++) {
@@ -115,11 +115,142 @@ public class MenuCustomer {
             System.out.println("Tên: " + customer.getFirstName());
             System.out.println("Tên đăng nhập: " + customer.getCustomerName());
             System.out.println("Email: " + customer.getEmail());
+//            System.out.println("Pass: " + customer.getPassword());
             System.out.println("Địa chỉ: " + customer.getAddress());
             System.out.println("Số điện thoại: " + customer.getPhone());
         } else {
             System.out.println("Không tìm thấy thông tin người dùng đăng nhập.");
         }
+    }
+
+    //---------ĐỔI INFORMATION CÁ NHÂN--------
+    private static void updateCusInfo() {
+        Customer customer = IOFile.readCustomerLogin();
+        if (customer != null) {
+            System.out.println("Cập nhật thông tin cá nhân:");
+
+            System.out.println("Nhập họ mới (hoặc nhấn Enter để bỏ qua):");
+            String lastName = scanner.nextLine();
+            if (!lastName.isEmpty()) {
+                customer.setLastName(lastName);
+            }
+
+            System.out.println("Nhập tên mới (hoặc nhấn Enter để bỏ qua):");
+            String firstName = scanner.nextLine();
+            if (!firstName.isEmpty()) {
+                customer.setFirstName(firstName);
+            }
+
+            System.out.println("Nhập tên đăng nhập mới (hoặc nhấn Enter để bỏ qua):");
+            String customerName = scanner.nextLine();
+            if (!customerName.isEmpty()) {
+                customer.setCustomerName(customerName);
+            }
+
+            System.out.println("Nhập địa chỉ mới (hoặc nhấn Enter để bỏ qua):");
+            String address = scanner.nextLine();
+            if (!address.isEmpty()) {
+                customer.setAddress(address);
+            }
+
+            System.out.println("Nhập số điện thoại mới (hoặc nhấn Enter để bỏ qua):");
+            String phone = scanner.nextLine();
+            if (!phone.isEmpty()) {
+                customer.setPhone(phone);
+            }
+
+            boolean updated = CustomerDesignImpl.updateInfo(customer);
+            if (updated) {
+                IOFile.writeCustomerLogin(customer);
+                System.out.println("Cập nhật thông tin thành công.");
+                menuCustomer();
+            } else {
+                System.err.println("Cập nhật thông tin thất bại.");
+            }
+        } else {
+            System.out.println("Không tìm thấy thông tin người dùng đăng nhập.");
+        }
+    }
+
+    //---------ĐỔI PASS CÁ NHÂN--------
+    private static void changePassword() {
+        final byte maxAttempts = 3;
+        Customer customer = IOFile.readCustomerLogin();
+        byte attempts = 0;
+
+        while (attempts < maxAttempts) {
+            System.out.print("Nhập mật khẩu cũ: ");
+            String oldPass = scanner.nextLine();
+
+            if (customer != null && oldPass.equals(customer.getPassword())) {
+                // Process new password
+                String newPassword = promptNewPassword();
+
+                if (newPassword != null) {
+                    customer.setPassword(newPassword);
+                    boolean updated = CustomerDesignImpl.updatePassword(customer);
+                    if (updated) {
+                        System.out.println("Cập nhật mật khẩu thành công.");
+                    } else {
+                        System.out.println("Cập nhật mật khẩu thất bại.");
+                    }
+                    menuCustomer();
+                    return;
+                } else {
+                    menuCustomer();
+                    return;
+                }
+            } else {
+                attempts++;
+                if (attempts < maxAttempts) {
+                    System.out.println("Mật khẩu cũ sai. Còn " + (maxAttempts - attempts) + " lần thử.");
+                } else {
+                    customer.setBlocked(true);
+                    customerDesign.save(customer);
+                    IOFile.writeToFile(CustomerDesignImpl.getCustomerList(), IOFile.CUSTOMER_PATH);
+                    System.out.println("Tài khoản của bạn đã bị khóa do nhập sai quá nhiều lần.");
+                }
+            }
+        }
+        logout();
+    }
+
+    private static String promptNewPassword() {
+        final byte initialAttempts = 2;
+        final byte additionalAttempts = 1;
+        final byte totalAttempts = initialAttempts + additionalAttempts;
+        int confirmAttempts = 0;
+        boolean additionalAttemptsGranted = false;
+
+        while (confirmAttempts < totalAttempts) {
+            System.out.print("Nhập mật khẩu mới: ");
+            String newPassword = scanner.nextLine();
+            System.out.print("Xác nhận mật khẩu mới: ");
+            String confirmPassword = scanner.nextLine();
+
+            if (newPassword.equals(confirmPassword) && !newPassword.isEmpty()) {
+                return newPassword;
+            } else {
+                confirmAttempts++;
+                if (confirmAttempts == initialAttempts && !additionalAttemptsGranted) {
+                    System.out.println("Bạn có muốn ngừng đổi mật khẩu và về trang chính không?Nếu không thì bạn còn " + additionalAttempts + " lần confirm, nếu vẫn sai tài khoản của bạn sẽ bị đóng (y/n): ");
+                    String choice = scanner.nextLine();
+                    if (choice.equalsIgnoreCase("y")) {
+                        return null;
+                    } else {
+                        additionalAttemptsGranted = true;
+                        System.out.println("Bạn còn " + additionalAttempts + " lần confirm.");
+                    }
+                } else if (confirmAttempts < totalAttempts) {
+                    System.err.print("Mật khẩu xác nhận không khớp. Còn " + (totalAttempts - confirmAttempts) + " lần thử.(enter)");
+                }
+            }
+        }
+
+        System.out.println("Bạn đã hết số lần thử. Đang tự động đăng xuất.");
+        logout();
+
+        return null;
     }
 
     //---------DANG KY--------
@@ -249,13 +380,13 @@ public class MenuCustomer {
     private static void login() {
         System.out.println("=================Đăng nhập=================");
         System.out.println("Nhập email :");
-        String userEmail = Inputmethods.getString();
+        String customerEmail = Inputmethods.getString();
         System.out.println("Nhập password");
         String password = Inputmethods.getString();
 
         List<Customer> customerList = IOFile.readFromFile(IOFile.CUSTOMER_PATH);
 
-        // Initialize admin user
+        // Initialize admin customer
         Customer admin = new Customer();
         admin.setCustomerName("admin");
         admin.setEmail("admin@gmail.com");
@@ -263,7 +394,7 @@ public class MenuCustomer {
         admin.setRoleName(RoleName.ADMIN);
         admin.setBlocked(false);
 
-        // Check if admin user already exists
+        // Check if admin customer already exists
         boolean adminExists = customerList.stream()
                 .anyMatch(c -> c.getEmail().equals(admin.getEmail()));
 
@@ -273,9 +404,9 @@ public class MenuCustomer {
         }
         System.out.println(customerList);
 
-        // Check user login
+        // Check customer login
         Customer customerLogin = customerList.stream()
-                .filter(c -> c.getEmail().equals(userEmail) && c.getPassword().equals(password))
+                .filter(c -> c.getEmail().equals(customerEmail) && c.getPassword().equals(password))
                 .findFirst()
                 .orElse(null);
 
@@ -289,14 +420,14 @@ public class MenuCustomer {
                 menuCustomer();
             }
         } else {
-            // Check if the user is blocked
+            // Check if the customer is blocked
             if (customerLogin.isBlocked()) {
                 System.err.println("Tài khoản bị khóa, vui lòng liên hệ 02348219");
             } else {
-                // Save login information if the user is not blocked
+                // Save login information if the customer is not blocked
                 IOFile.writeCustomerLogin(customerLogin);
 
-                // Xét quyền của user
+                // Xét quyền của customer
                 if (customerLogin.getRoleName() == RoleName.ADMIN) {
                     MenuAdmin.menuAdmin();
                 } else if (customerLogin.getRoleName() == RoleName.CUSTOMER) {

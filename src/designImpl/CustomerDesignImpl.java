@@ -10,10 +10,8 @@ import java.util.List;
 
 public class CustomerDesignImpl implements IDesign<Customer, Integer> {
     private static List<Customer> customerList;
-    Customer customer = null;
 
     public static List<Customer> getCustomerList() {
-
         return customerList;
     }
 
@@ -24,7 +22,7 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
     };
 
 
-    @Override
+//    @Override
     public void save(Customer customer) {
         if (customer.getCustomerId() == 0) {
             // New customer, assign a new ID
@@ -79,11 +77,34 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
     }
 
 
-
     @Override
     public List<Customer> getAll() {
         return customerList;
     }
+
+    public static boolean updateInfo(Customer updatedCus) {
+        for (Customer customer : customerList) {
+            if (customer.getCustomerId() == updatedCus.getCustomerId()) {
+                customer.setCustomerName(updatedCus.getCustomerName());
+                customer.setAddress(updatedCus.getAddress());
+                customer.setPhone(updatedCus.getPhone());
+                IOFile.writeToFile(customerList, IOFile.CUSTOMER_PATH);
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean updatePassword(Customer updatedCus) {
+        for (Customer customer : customerList) {
+            if (customer.getCustomerId() == updatedCus.getCustomerId()) {
+                customer.setPassword(updatedCus.getPassword());
+                IOFile.writeToFile(customerList, IOFile.CUSTOMER_PATH);
+                return true;
+            }
+        }
+        return false;
+    }
+
 public boolean blockCustomer(int cusId) {
     Customer cus = findById(cusId);
     if (cus != null) {

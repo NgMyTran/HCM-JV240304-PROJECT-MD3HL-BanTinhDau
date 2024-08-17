@@ -136,6 +136,7 @@ public class Customer implements Serializable {
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
+//                ", pass='" + password+ '\'' +
                 ", isBlock='" + isBlocked + '\'' +
                 " } \n";
     }

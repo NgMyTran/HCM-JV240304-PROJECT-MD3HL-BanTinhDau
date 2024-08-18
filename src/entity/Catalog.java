@@ -8,14 +8,14 @@ public class Catalog implements Serializable {
     private int catalogId;
     private  String catalogName;
     private String catalogDescription;
-    private boolean catalogIsActive;
+    private boolean catalogIsActive=true;
 
     public Catalog(){}
     public Catalog(int catalogId, String catalogName, boolean catalogIsActive, String catalogDescription) {
         this.catalogId = catalogId;
         this.catalogName = catalogName;
         this.catalogDescription = catalogDescription;
-        this.catalogIsActive = true;
+        this.catalogIsActive = catalogIsActive;
     }
 
     public String getDescription() {
@@ -62,6 +62,7 @@ public class Catalog implements Serializable {
         return "Catalog{" +
                 "id=" + catalogId +
                 ", catalogName='" + catalogName + '\'' +
+                ", description='" + catalogDescription + '\'' +
                 ", catalogIsActive=" + catalogIsActive +
                 '}';
     }

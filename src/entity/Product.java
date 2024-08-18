@@ -1,19 +1,24 @@
 package entity;
 
+import designImpl.CatalogDesignImpl;
 import util.Inputmethods;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-public class Product implements Comparable<Product>{
-    Catalog catalog;
+public class Product implements Serializable, Comparable<Product>{
+    private static final long serialVersionUID = 1L;
+
+    private Catalog catalog;
     private int productId;
     private String productName;
     private double productPrice;
     private String description;
     private int stock;
     private int catalogId;
-    private LocalDate createdAt=LocalDate.now();
+    private LocalDate createdAt = LocalDate.now();
     private LocalDate updatedAt;
     private boolean status = true;
 
@@ -30,6 +35,15 @@ public class Product implements Comparable<Product>{
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.status = status;
+    }
+
+    public void setCatalog(Catalog catalog) {
+        this.catalog = catalog;
+        this.catalogId = catalog.getCatalogId(); // Đồng bộ hóa catalogId
+    }
+
+    public Catalog getCatalog() {
+        return catalog;
     }
 
     public int getProductId() {
@@ -96,7 +110,7 @@ public class Product implements Comparable<Product>{
         this.updatedAt = updatedAt;
     }
 
-    public boolean isStatus() {
+    public boolean getStatus() {
         return status;
     }
 
@@ -105,7 +119,7 @@ public class Product implements Comparable<Product>{
     }
 
 
-    public void inputData(List<Catalog> list) {
+    public void inputData() {
         while (true) {
             System.out.print("Nhập tên sản phẩm: ");
             String inputName = Inputmethods.getString();
@@ -159,38 +173,39 @@ public class Product implements Comparable<Product>{
         }
 
         // Hiển thị danh sách danh mục và chọn danh mục hợp lệ
-        for (Catalog c : list) {
-            System.out.println(c);
+        System.out.println("Danh sách danh mục:");
+        List<Catalog> catalogs = CatalogDesignImpl.getCatalogList();
+        for (Catalog catalog : catalogs) {
+            System.out.printf("ID: %-3s | Name: %-15s |\n", catalog.getCatalogId(), catalog.getCatalogName());
         }
-
         while (true) {
             System.out.print("Vui lòng chọn ID danh mục: ");
             int id = Inputmethods.getInteger();
-            boolean found = false;
-            for (Catalog c : list) {
-                if (c.getCatalogId() == id) {
-                    this.catalogId = id;
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
+            // Lấy danh mục dựa trên ID từ danh sách danh mục
+            Catalog selectedCatalog = CatalogDesignImpl.getCatalogList().stream()
+                    .filter(catalog -> catalog.getCatalogId() == id)
+                    .findFirst()
+                    .orElse(null);
+
+            if (selectedCatalog != null) {
+                this.setCatalog(selectedCatalog); // Gán danh mục cho sản phẩm
                 break;
             } else {
-                System.err.println("Không có danh mục đó, vui lòng chọn lại.");
+                System.err.println("Không có danh mục với ID đó, vui lòng chọn lại.");
             }
         }
     }
+        @Override
+        public int compareTo (Product o){
+            return Double.compare(o.getProductPrice(), this.productPrice);
+        }
 
-    @Override
-    public String toString() {
-        return "ID: " + productId + " | Name: " + productName + " | Price: " + productPrice +
-                " | Description: " + description + " | Stock: " + stock +
-                "\nCatalog: " + catalog.getCatalogName() + " | Status: " + (status ? "Bán" : "Không bán");
-    }
 
-    @Override
-    public int compareTo(Product o) {
-        return Double.compare(o.getProductPrice(), this.productPrice);
+        @Override
+        public String toString () {
+            return "ID: " + productId + " | Name: " + productName + " | Price: " + productPrice +
+                    " | Description: " + description + " | Stock: " + stock +
+                    "\nCatalog's name: " + (catalog != null ? catalog.getCatalogName() : "N/A") ;
+//                    " | Status: " + (status ? "Bán" : "Không bán");
+        }
     }
-}

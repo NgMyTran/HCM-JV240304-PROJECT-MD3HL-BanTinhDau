@@ -20,11 +20,10 @@ public class MenuAdmin {
         byte choice = Inputmethods.getByte();
         switch (choice) {
             case 1:
-//                catalogManagement.CatalogManagement(new CatalogDesignImpl());
                 CatalogManagement.catalogManagementMenu();
                 break;
             case 2:
-//                ProductManager.productManagementMenu();
+                ProductMangement.productManagementMenu();
                 break;
             case 3:
                 CustomerManagement.userManagementMenu();

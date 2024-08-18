@@ -10,9 +10,13 @@ import java.util.List;
 
 public class CustomerDesignImpl implements IDesign<Customer, Integer> {
     private static List<Customer> customerList;
+    private static List<Customer> deletedCustomerList;
 
     public static List<Customer> getCustomerList() {
         return customerList;
+    }
+    public static List<Customer> getDeletedCustomerList() {
+        return deletedCustomerList;
     }
 
     public CustomerDesignImpl() {
@@ -40,6 +44,13 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
             }
         }
         IOFile.writeToFile(customerList, IOFile.CUSTOMER_PATH);
+    }
+
+
+
+    @Override
+    public List<Customer> getAll() {
+        return customerList;
     }
 
     @Override
@@ -77,10 +88,6 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
     }
 
 
-    @Override
-    public List<Customer> getAll() {
-        return customerList;
-    }
 
     public static boolean updateInfo(Customer updatedCus) {
         for (Customer customer : customerList) {

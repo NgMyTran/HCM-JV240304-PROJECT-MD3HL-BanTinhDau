@@ -1,17 +1,24 @@
 package run.menu_customer;
 
 import designImpl.CustomerDesignImpl;
+import designImpl.ProductDesignImpl;
 import entity.Customer;
+import entity.Product;
 import entity.RoleName;
+import run.menu_admin.CatalogManagement;
 import run.menu_admin.MenuAdmin;
 import util.IOFile;
 import util.Inputmethods;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MenuCustomer {
-    static CustomerDesignImpl customerDesign = new CustomerDesignImpl();
+ private    static CustomerDesignImpl customerDesign = new CustomerDesignImpl();
+    private static ProductDesignImpl productDesign = new ProductDesignImpl();
+
     private static Scanner scanner = new Scanner(System.in);
 
     public static void menuCustomer() {
@@ -52,10 +59,10 @@ public class MenuCustomer {
             byte choice = Inputmethods.getByte();
             switch (choice) {
                 case 1:
-//                ProductManager.showProductList();
+                    showListProduct();
                     break;
                 case 2:
-                    //displayProductByCategory(scanner);
+                    CatalogManagement.displayProductsByCatalog();
                     break;
                 case 3:
                     //addProductToCart(user);
@@ -105,6 +112,30 @@ public class MenuCustomer {
         }
         return sb.toString();
     }
+
+    private static void showListProduct() {
+        List<Product> productList = productDesign.getAll();
+        if (productList == null || productList.isEmpty()) {
+            System.err.println("Chưa có sản phẩm nào.");
+            return;
+        }
+
+        // Lọc các sản phẩm có status == true
+        List<Product> activeProducts = productList.stream()
+                .filter(Product::getStatus)
+                .sorted(Comparator.comparingInt(Product::getProductId))
+                .collect(Collectors.toList());
+
+        if (activeProducts.isEmpty()) {
+            System.out.println("Không có sản phẩm nào hoạt động.");
+            return;
+        }
+
+        for (Product product : activeProducts) {
+            System.out.println(product);
+        }
+    }
+
 
     //---------HIỂN THỊ INFORMATION CÁ NHÂN--------
     private static void displayCusInfo() {
@@ -385,26 +416,9 @@ public class MenuCustomer {
         String password = Inputmethods.getString();
 
         List<Customer> customerList = IOFile.readFromFile(IOFile.CUSTOMER_PATH);
-
-        // Initialize admin customer
-        Customer admin = new Customer();
-        admin.setCustomerName("admin");
-        admin.setEmail("admin@gmail.com");
-        admin.setPassword("admin123");
-        admin.setRoleName(RoleName.ADMIN);
-        admin.setBlocked(false);
-
-        // Check if admin customer already exists
-        boolean adminExists = customerList.stream()
-                .anyMatch(c -> c.getEmail().equals(admin.getEmail()));
-
-        if (!adminExists) {
-            customerList.add(admin); // Add admin if not exists
-            IOFile.writeToFile(customerList, IOFile.CUSTOMER_PATH); // Save updated list to file
-        }
         System.out.println(customerList);
 
-        // Check customer login
+//         Check customer login
         Customer customerLogin = customerList.stream()
                 .filter(c -> c.getEmail().equals(customerEmail) && c.getPassword().equals(password))
                 .findFirst()

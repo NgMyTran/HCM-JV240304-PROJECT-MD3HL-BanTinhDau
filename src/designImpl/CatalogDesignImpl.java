@@ -54,6 +54,14 @@ public class CatalogDesignImpl implements IDesign<Catalog, Integer> {
         }
         return null;
     }
+    public Catalog findByName(String name) {
+        for (Catalog c : catalogList) {
+            if (c.getCatalogName().equals(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
 
     @Override
     public void delete(Integer id) {

@@ -40,7 +40,7 @@ public class CatalogManagement {
                     addNewCatalog();
                     break;
                 case 3:
-                    findCatalogById();
+                    findCatalogByName();
                     break;
                 case 4:
                     updateCatalog();
@@ -162,10 +162,10 @@ public class CatalogManagement {
         System.out.println("Cập nhật danh mục thành công.");
     }
 
-    private static void findCatalogById() {
-        System.out.print("Nhập ID danh mục: ");
-        int id = Inputmethods.getInteger();
-        Catalog catalog = catalogDesignImpl.findById(id);
+    private static void findCatalogByName() {
+        System.out.print("Nhập name danh mục: ");
+        String name = Inputmethods.getString();
+        Catalog catalog = catalogDesignImpl.findByName(name);
         if (catalog != null) {
             System.out.println(catalog);
         } else {

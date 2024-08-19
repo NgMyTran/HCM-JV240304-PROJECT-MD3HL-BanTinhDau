@@ -47,6 +47,12 @@ public class ProductDesignImpl implements IDesign<Product, Integer> {
                 .findFirst()
                 .orElse(null);
     }
+    public Product findByName(String name) {
+        return productList.stream()
+                .filter(product -> product.getProductName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
 
     @Override
     public void delete(Integer id) {

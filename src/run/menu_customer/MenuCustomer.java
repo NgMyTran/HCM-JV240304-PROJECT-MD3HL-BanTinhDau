@@ -38,6 +38,8 @@ public class MenuCustomer {
 
             printMenuItem(1, "Xem tất cả mặt hàng");
             printMenuItem(2, "Xem mặt hàng theo danh mục");
+            printMenuItem(13, "Tìm mặt hàng theo tên");
+
             printMenuItem(3, "Thêm mặt hàng vào giỏ");
             printMenuItem(4, "Xem giỏ hàng");
             printMenuItem(5, "Xóa mặt hàng khỏi giỏ");
@@ -91,7 +93,9 @@ public class MenuCustomer {
                     logout();
                     break;
                 case 12:
-
+                    break;
+                case 13:
+                    findProductByName();
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng nhập lại");
@@ -136,7 +140,16 @@ public class MenuCustomer {
         }
     }
 
-
+    private static void findProductByName() {
+        System.out.print("Nhập tên mặt hàng: ");
+        String name = scanner.nextLine();
+        Product product = productDesign.findByName(name);
+        if (product != null) {
+            System.out.println(product);
+        } else {
+            System.out.println("Không tìm thấy danh mục với tên này.");
+        }
+    }
     //---------HIỂN THỊ INFORMATION CÁ NHÂN--------
     private static void displayCusInfo() {
         Customer customer = IOFile.readCustomerLogin();
@@ -170,12 +183,6 @@ public class MenuCustomer {
             String firstName = scanner.nextLine();
             if (!firstName.isEmpty()) {
                 customer.setFirstName(firstName);
-            }
-
-            System.out.println("Nhập tên đăng nhập mới (hoặc nhấn Enter để bỏ qua):");
-            String customerName = scanner.nextLine();
-            if (!customerName.isEmpty()) {
-                customer.setCustomerName(customerName);
             }
 
             System.out.println("Nhập địa chỉ mới (hoặc nhấn Enter để bỏ qua):");

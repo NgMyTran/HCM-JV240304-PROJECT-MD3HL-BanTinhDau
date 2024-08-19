@@ -93,6 +93,8 @@ public static <T> List<T> readFromFile(String path) {
         File file = new File(CUSTOMERLOGIN_PATH);
         if (!file.exists()) {
             System.err.println("File CustomerLogin không tồn tại");
+            System.out.println("");
+
             return null;
         }
         try (FileInputStream fis = new FileInputStream(file);
@@ -128,6 +130,8 @@ public static <T> List<T> readFromFile(String path) {
         File file = new File(CUSTOMERLOGIN_PATH);
         if (!file.exists()) {
             System.err.println("File không tồn tại");
+            System.out.println("");
+
             return null;
         }
         try (FileInputStream fis = new FileInputStream(file);

@@ -73,20 +73,6 @@ public class CatalogDesignImpl implements IDesign<Catalog, Integer> {
         }
     }
 
-//    public void deleteAndSave(Integer id) {
-//        Catalog catalog = findById(id);
-//        if (catalog != null) {
-//            catalogList.remove(catalog);
-////            catalog.setCatalogId(getNewId());
-//            IOFile.writeToFile(catalogList, IOFile.CATALOG_PATH); // Cập nhật danh sách khách hàng hiện tại
-//            // Lưu khách hàng đã xóa vào file
-//            deletedCatalogs.add(catalog);
-//            IOFile.writeToFileDeletedList(deletedCatalogs, IOFile.DELETED_CATALOG_PATH);
-//
-//        } else {
-//            System.err.println("Không có khách hàng này");
-//        }
-//    }
 public void deleteAndSave(Integer id) {
     Catalog catalog = findById(id);
     if (catalog != null) {
@@ -101,13 +87,14 @@ public void deleteAndSave(Integer id) {
         } else {
             catalogList.remove(catalog);
             List<Catalog> deletedCatalogs = IOFile.readFromFile(IOFile.DELETED_CATALOG_PATH);
-            if (deletedCatalogs == null) {
-                deletedCatalogs = new ArrayList<>();
-            }
+//            if (deletedCatalogs == null) {
+//                deletedCatalogs = new ArrayList<>();
+//            }
+            catalog.setStatus(false);
             deletedCatalogs.add(catalog);
             IOFile.writeToFileDeletedList(deletedCatalogs, IOFile.DELETED_CATALOG_PATH);
             IOFile.writeToFile(catalogList, IOFile.CATALOG_PATH);
-            System.out.println("Danh mục " + catalog.getCatalogId() + " đã được xóa và lưu vào file.");
+            System.out.println("Danh mục " + catalog.getCatalogId() + " đã được xóa.");
         }
     } else {
         System.err.println("Không có danh mục này.");
@@ -148,6 +135,6 @@ public void deleteAndSave(Integer id) {
                 return;
             }
         }
-        System.out.println("Không có danh mục nào bị xóa với tên " + catalogName);
+//        System.out.println("Không có danh mục nào bị xóa với tên " + catalogName);
     }
 }

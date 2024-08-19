@@ -110,7 +110,7 @@ public class ProductMangement {
         productDesign.delete(id);
         productDesign.updateProductIds();
 
-            System.out.println("Sản  " + product.getProductId() + " được đánh dấu là không hoạt động và lưu vào file.");
+//            System.out.println("Sản  " + product.getProductId() + " được đánh dấu là không hoạt động và lưu vào file.");
         }
         else {
             System.err.println("Không tìm thấy sản .");

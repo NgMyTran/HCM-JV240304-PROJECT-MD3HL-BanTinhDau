@@ -1,10 +1,10 @@
 package run.menu_customer;
 
+import designImpl.CartDesignImpl;
+import designImpl.CatalogDesignImpl;
 import designImpl.CustomerDesignImpl;
 import designImpl.ProductDesignImpl;
-import entity.Customer;
-import entity.Product;
-import entity.RoleName;
+import entity.*;
 import run.menu_admin.CatalogManagement;
 import run.menu_admin.MenuAdmin;
 import util.IOFile;
@@ -18,91 +18,101 @@ import java.util.stream.Collectors;
 public class MenuCustomer {
  private    static CustomerDesignImpl customerDesign = new CustomerDesignImpl();
     private static ProductDesignImpl productDesign = new ProductDesignImpl();
+    private static CartDesignImpl cartDesign = new CartDesignImpl();
+    private static CatalogDesignImpl catalogDesign = new CatalogDesignImpl();
 
     private static Scanner scanner = new Scanner(System.in);
+public static void menuCustomer() {
+    String customerName = IOFile.readCusName();
+    if (customerName == null) {
+        customerName = "BẠN";
+    }
 
-    public static void menuCustomer() {
+    while (true) {
+        boolean isLoggedIn = IOFile.readCusName() != null;
 
-        String customerName = IOFile.readCusName();
-        if (customerName == null) {
-            customerName = "BẠN";
+        System.out.println("╔══════════════════════════════════════════════════════════════════╗");
+        System.out.println("  Chào mừng " + "( " + customerName + " )" + " đến cửa hàng để mua sắm ");
+        System.out.println("╠══════════════════════════════════════════════════════════════════╣");
+
+        printMenuItem(1, "Xem tất cả mặt hàng");
+        printMenuItem(2, "Xem mặt hàng theo danh mục");
+        printMenuItem(3, "Tìm mặt hàng theo tên");
+
+        if (!isLoggedIn) {
+            printMenuItem(4, "Đăng ký");
+            printMenuItem(5, "Đăng nhập");
         }
 
-        while (true) {
-
-            boolean isLoggedIn = IOFile.readCusName() != null;
-
-            System.out.println("╔══════════════════════════════════════════════════════════════════╗");
-            System.out.println("  Chào mừng " + "( " + customerName + " )" + " đến cửa hàng để mua sắm ");
-            System.out.println("╠══════════════════════════════════════════════════════════════════╣");
-
-            printMenuItem(1, "Xem tất cả mặt hàng");
-            printMenuItem(2, "Xem mặt hàng theo danh mục");
-            printMenuItem(13, "Tìm mặt hàng theo tên");
-
-            printMenuItem(3, "Thêm mặt hàng vào giỏ");
-            printMenuItem(4, "Xem giỏ hàng");
-            printMenuItem(5, "Xóa mặt hàng khỏi giỏ");
-            printMenuItem(6, "Hiển thị thông tin cá nhân");
-            printMenuItem(7, "Sửa thông tin cá nhân");
-            printMenuItem(8, "Đổi mật khẩu đăng nhập");
-
-            if (isLoggedIn) {
-                printMenuItem(11, "Đăng xuất");
-            } else {
-                printMenuItem(9, "Đăng ký");
-                printMenuItem(10, "Đăng nhập");
-            }
-
-            printMenuItem(12, "Thanh toán");
-            System.out.println("╚══════════════════════════════════════════════════════════════════╝");
+        if (isLoggedIn) {
             System.out.println("");
-            System.out.print("Nhập lựa chọn của bạn: ");
-            byte choice = Inputmethods.getByte();
-            switch (choice) {
-                case 1:
-                    showListProduct();
-                    break;
-                case 2:
-                    CatalogManagement.displayProductsByCatalog();
-                    break;
-                case 3:
-                    //addProductToCart(user);
-                case 4:
-                    //showCart(user);
-                    break;
-                case 5:
-                    //removeProductFromCart();
-                    break;
-                case 6:
-                    displayCusInfo();
-                    break;
-                case 7:
-                    updateCusInfo();
-                    break;
-                case 8:
+            printMenuItem(6, "Thêm mặt hàng vào giỏ");
+            printMenuItem(7, "Xem giỏ hàng");
+            printMenuItem(8, "Thay đổi số lượng sản phẩm trong giỏ hàng");
+            printMenuItem(9, "Xóa mặt hàng khỏi giỏ");
+            printMenuItem(10, "Hiển thị thông tin cá nhân");
+            printMenuItem(11, "Sửa thông tin cá nhân");
+            printMenuItem(12, "Đổi mật khẩu đăng nhập");
+            printMenuItem(13, "Thanh toán");
+            printMenuItem(14, "Đăng xuất");
+        }
+
+        System.out.println("╚══════════════════════════════════════════════════════════════════╝");
+        System.out.println("");
+        System.out.print("Nhập lựa chọn của bạn: ");
+        byte choice = Inputmethods.getByte();
+        switch (choice) {
+            case 1:
+                showListProduct();
+                break;
+            case 2:
+                displayProductsByCatalog();
+                break;
+            case 3:
+                findProductByName();
+                break;
+            case 4:
+                register();
+                break;
+            case 5:
+                login();
+                break;
+            case 6:
+                addToCart();
+                break;
+            case 7:
+                showCart();
+                break;
+            case 8:
+                changeCartQuantity();
+                break;
+            case 9:
+                deleteCartItem();
+                break;
+            case 10:
+                displayCusInfo();
+                break;
+            case 11:
+                updateCusInfo();
+                break;
+            case 12:
                 changePassword();
-                    break;
-                case 9:
-                    register();
-                    break;
-                case 10:
-                    login();
-                    break;
-                case 11:
-                    logout();
-                    break;
-                case 12:
-                    break;
-                case 13:
-                    findProductByName();
-                    break;
-                default:
-                    System.out.println("Lựa chọn không hợp lệ. Vui lòng nhập lại");
-                    break;
-            }
+                break;
+            case 13:
+                checkout();
+                break;
+            case 14:
+                logout();
+                break;
+            default:
+                System.out.println("Lựa chọn không hợp lệ. Vui lòng nhập lại");
+                break;
         }
     }
+}
+
+
+
     private static void printMenuItem(int number, String text) {
         String format = String.format("║  %2d. %-15s", number, text);
         int paddingLength = 67 - format.length();
@@ -117,10 +127,12 @@ public class MenuCustomer {
         return sb.toString();
     }
 
+    //---------LIST PRODUCT--------
     private static void showListProduct() {
         List<Product> productList = productDesign.getAll();
         if (productList == null || productList.isEmpty()) {
             System.err.println("Chưa có sản phẩm nào.");
+            System.out.println("");
             return;
         }
 
@@ -132,6 +144,8 @@ public class MenuCustomer {
 
         if (activeProducts.isEmpty()) {
             System.out.println("Không có sản phẩm nào hoạt động.");
+            System.out.println("");
+
             return;
         }
 
@@ -140,6 +154,53 @@ public class MenuCustomer {
         }
     }
 
+    //---------HIỂN THỊ DANH SÁCH SẢN PHẨM THEO CATALOG--------
+    public static void displayProductsByCatalog() {
+        // Đọc danh sách sản phẩm từ file
+        List<Product> products = IOFile.readFromFile(IOFile.PRODUCT_PATH);
+        if (products == null) {
+            System.err.println("Danh sách sản phẩm không hợp lệ.");
+            return;
+        }
+
+        // Hiển thị danh sách danh mục cho người dùng chọn
+        List<Catalog> catalogs =catalogDesign .getAll();
+        if (catalogs.isEmpty()) {
+            System.err.println("Chưa có danh mục nào");
+            return;
+        }
+
+        System.out.println("Danh sách danh mục:");
+        for (Catalog catalog : catalogs) {
+            long productCount = products.stream()
+                    .filter(p -> p.getCatalogId() == catalog.getCatalogId())
+                    .count();
+            System.out.println(catalog + " | Total Products: " + productCount);
+        }
+
+        // Người dùng chọn danh mục
+        System.out.print("Nhập ID danh mục để xem sản phẩm: ");
+        int catalogId = Inputmethods.getInteger();
+
+        // Tìm danh mục theo ID
+        Catalog selectedCatalog =catalogDesign .findById(catalogId);
+        if (selectedCatalog == null) {
+            System.err.println("Danh mục không tồn tại.");
+            return;
+        }
+
+        // Hiển thị sản phẩm thuộc danh mục đã chọn
+        System.out.println("Sản phẩm thuộc danh mục: " + selectedCatalog.getCatalogName());
+        products.stream()
+                .filter(p -> p.getCatalogId() == catalogId)
+                .forEach(System.out::println);
+
+        if (products.stream().noneMatch(p -> p.getCatalogId() == catalogId)) {
+            System.out.println("Không có sản phẩm nào trong danh mục này.");
+        }
+    }
+
+    //---------TÌM SP = TÊN--------
     private static void findProductByName() {
         System.out.print("Nhập tên mặt hàng: ");
         String name = scanner.nextLine();
@@ -150,6 +211,7 @@ public class MenuCustomer {
             System.out.println("Không tìm thấy danh mục với tên này.");
         }
     }
+
     //---------HIỂN THỊ INFORMATION CÁ NHÂN--------
     private static void displayCusInfo() {
         Customer customer = IOFile.readCustomerLogin();
@@ -465,4 +527,108 @@ public class MenuCustomer {
         System.out.println("Đăng xuất thành công. Về lại trạng thái trrước khi đăng nhập.");
         menuCustomer();
     }
+
+
+    //---------CART--------
+    public static void addToCart() {
+        System.out.println("Nhập id của sản phẩm cần mua");
+        int idPro = Inputmethods.getInteger();
+        Product p = productDesign.findById(idPro);
+        if (p == null) {
+            System.err.println("ID không tồn tại");
+            return;
+        }
+        if (p.getStock() <= 0) {
+            System.err.println("Sản phẩm hết hàng");
+            return;
+        }
+
+        System.out.println("Nhập số lượng thêm mới");
+        int quantity;
+        while (true) {
+            quantity = Inputmethods.getInteger();
+            if (quantity <= p.getStock()) {
+                break;
+            }
+            System.err.println("Số lượng trong kho chỉ còn " + p.getStock() + ", vui lòng giảm số lượng");
+        }
+        CartItem cartItem = cartDesign.findByProductId(idPro);
+        if (cartItem == null) {
+            cartDesign.save(new CartItem(cartDesign.getNewCartItemId(), idPro, p.getProductPrice(), quantity));
+        } else {
+            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartDesign.changeQuantity(cartItem);
+        }
+        p.setStock(p.getStock() - quantity);
+        productDesign.save(p);
+    }
+
+    private static void showCart() {
+        if (cartDesign.getAll().size() == 0) {
+            System.err.println("Không có sản phẩm nào trong giỏ hàng");
+            System.out.println("");
+            return;
+        }
+        double total =0;
+        for (CartItem ci : cartDesign.getAll()) {
+            total += ci.getPrice()*ci.getQuantity();
+            System.out.println(ci);
+        }
+        System.out.println("Total : " +total);
+    }
+
+    private static void changeCartQuantity() {
+        System.out.println("Nhập vào itemId muốn thay đổi số lượng");
+        int cartItemId = Inputmethods.getInteger();
+        CartItem cartItem = cartDesign.findById(cartItemId);
+        if (cartItem == null) {
+            System.err.println("ID không tồn tại");
+            return;
+        }
+        Product p = productDesign.findById(cartItem.getProductId());
+        if (p == null) {
+            System.err.println("Sản phẩm không tồn tại");
+            return;
+        }
+
+        System.out.println("Nhập vào số lượng cần thay đổi");
+        int newQuantity;
+        while (true) {
+            newQuantity = Inputmethods.getInteger();
+            if (newQuantity <= cartItem.getQuantity() + p.getStock()) {
+                p.setStock(p.getStock() + cartItem.getQuantity()); // Trả lại số lượng từ giỏ hàng về kho
+                cartItem.setQuantity(newQuantity);
+                cartDesign.changeQuantity(cartItem);
+                p.setStock(p.getStock() - newQuantity); // Giảm số lượng trong kho
+                productDesign.save(p);
+                break;
+            }
+            System.err.println("Tối đa chỉ có thể mua " + (cartItem.getQuantity() + p.getStock()) + " sản phẩm");
+        }
+    }
+
+    private static void deleteCartItem(){
+        System.out.println("Nhập vào itemId muốn xóa");
+        int cartItemId = Inputmethods.getInteger();
+        CartItem cartItem = cartDesign.findById(cartItemId);
+        if (cartItem == null) {
+            System.err.println("ID không tồn tại");
+            return;
+        }
+        cartDesign.delete(cartItemId);
+        Product p = productDesign.findById(cartItem.getProductId());
+        if (p != null) {
+            p.setStock(p.getStock() + cartItem.getQuantity());
+            productDesign.save(p);
+        }
+
+    }
+    //---------END CART--------
+
+    private static void checkout() {
+        // Xử lý thanh toán
+//        System.out.println("Thanh toán thành công.");
+//        cartDesign.clear(); // Xóa giỏ hàng sau khi thanh toán thành công
+    }
+
 }

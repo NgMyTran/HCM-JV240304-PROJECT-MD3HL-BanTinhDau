@@ -1,15 +1,12 @@
 package entity;
 
 import java.io.Serializable;
-import entity.Product;
 
 public class CartItem implements Serializable {
-   private Product product;
-    private int cartItemId ;
-    private int productId;
+    private int cartItemId;
+    private int productId; // Thay đổi từ Product thành int
     private double price;
     private int quantity;
-
 
     public CartItem() {
     }
@@ -19,22 +16,6 @@ public class CartItem implements Serializable {
         this.productId = productId;
         this.price = price;
         this.quantity = quantity;
-    }
-
-    public CartItem(Product product, int cartItemId, int productId, double price, int quantity) {
-        this.product = product;
-        this.cartItemId = cartItemId;
-        this.productId = productId;
-        this.price = price;
-        this.quantity = quantity;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public int getCartItemId() {
@@ -69,12 +50,9 @@ public class CartItem implements Serializable {
         this.quantity = quantity;
     }
 
-
-
     @Override
     public String toString() {
-        return "Id : "+cartItemId +"| ProductName : " + product.getProductName()
-                +"\n Price : "+price + "| Quantity : " +quantity + "| TotalAmout :" +quantity*price;
+        return "Id: " + cartItemId + " | ProductId: " + productId
+                + "\n Price: " + price + " | Quantity: " + quantity + " | TotalAmount: " + quantity * price;
     }
-
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class CatalogManagement {
     private static final CatalogDesignImpl catalogDesignImpl = new CatalogDesignImpl();
@@ -22,11 +23,11 @@ public class CatalogManagement {
             System.out.println("╠════════════════════════════════════╣");
             System.out.println("║  1. Hiển thị danh sách danh mục    ║");
             System.out.println("║  2. Thêm danh mục mới              ║");
-            System.out.println("║  3. Tìm catalog bằng id            ║");
+            System.out.println("║  3. Tìm catalog bằng tên           ║");
             System.out.println("║  4. Cập nhật danh mục              ║");
             System.out.println("║  5. Xóa danh mục                   ║");
             System.out.println("║  6. Hiển thị list danh mục đã xóa  ║");
-            System.out.println("║  7. Xem sản phẩm theo danh mục     ║");
+//            System.out.println("║  7. Xem sản phẩm theo danh mục     ║");
             System.out.println("║  8. Thoát                          ║");
             System.out.println("╚════════════════════════════════════╝");
 
@@ -51,9 +52,9 @@ public class CatalogManagement {
                 case 6:
                     displayDeletedCatalogs();
                     break;
-                case 7:
-                    displayProductsByCatalog();
-                    break;
+//                case 7:
+//                    displayProductsByCatalog();
+//                    break;
                 case 8:
                     MenuAdmin.menuAdmin();
                     return; // Thoát khỏi vòng lặp
@@ -76,54 +77,43 @@ public class CatalogManagement {
             System.err.println("Chưa có danh mục nào");
             return;
         }
+
+        // Hiển thị tất cả các danh mục và số lượng sản phẩm trong từng danh mục
         catalogs.sort(Comparator.comparingInt(Catalog::getCatalogId));
         for (Catalog catalog : catalogs) {
-                long productCount = products.stream()
-                        .filter(p -> p.getCatalogId() == catalog.getCatalogId())
-                        .count(); //count() để đếm số lượng sản phẩm. Nếu không có sản phẩm nào thuộc danh mục đó, count() sẽ trả về 0.
-                System.out.println(catalog + " | Total Products: " + productCount);
-        }
-    }
-
-    public static void displayProductsByCatalog() {
-        // Đọc danh sách sản phẩm từ file
-        List<Product> products = IOFile.readFromFile(IOFile.PRODUCT_PATH);
-        if (products == null) {
-            System.err.println("Danh sách sản phẩm không hợp lệ.");
-            return;
+            long productCount = products.stream()
+                    .filter(p -> p.getCatalogId() == catalog.getCatalogId())
+                    .count();
+            System.out.println(catalog + " | Tổng số sản phẩm: " + productCount);
         }
 
-        // Hiển thị danh sách danh mục cho người dùng chọn
-        List<Catalog> catalogs = catalogDesignImpl.getAll();
-        if (catalogs.isEmpty()) {
-            System.err.println("Chưa có danh mục nào");
-            return;
-        }
+        // Hỏi người dùng có muốn xem sản phẩm theo danh mục không
+        System.out.print("Bạn có muốn xem danh sách sản phẩm của một danh mục cụ thể không? (y/n): ");
+        String response = Inputmethods.getString().trim().toLowerCase();
 
-        System.out.println("Danh sách danh mục:");
-        for (Catalog catalog : catalogs) {
-            System.out.println(catalog);
-        }
+        if (response.equals("y")) {
+            // Hiển thị danh sách danh mục để người dùng chọn
+            System.out.print("Nhập ID danh mục bạn muốn xem sản phẩm: ");
+            int catalogId = Inputmethods.getInteger();
 
-        // Người dùng chọn danh mục
-        System.out.print("Nhập ID danh mục để xem sản phẩm: ");
-        int catalogId = Inputmethods.getInteger();
+            // Tìm danh mục theo ID
+            Catalog selectedCatalog = catalogDesignImpl.findById(catalogId);
+            if (selectedCatalog == null) {
+                System.err.println("Danh mục không tồn tại.");
+                return;
+            }
 
-        // Tìm danh mục theo ID
-        Catalog selectedCatalog = catalogDesignImpl.findById(catalogId);
-        if (selectedCatalog == null) {
-            System.err.println("Danh mục không tồn tại.");
-            return;
-        }
+            // Hiển thị sản phẩm thuộc danh mục đã chọn
+            System.out.println("Sản phẩm thuộc danh mục: " + selectedCatalog.getCatalogName());
+            List<Product> filteredProducts = products.stream()
+                    .filter(p -> p.getCatalogId() == catalogId)
+                    .collect(Collectors.toList());
 
-        // Hiển thị sản phẩm thuộc danh mục đã chọn
-        System.out.println("Sản phẩm thuộc danh mục: " + selectedCatalog.getCatalogName());
-        products.stream()
-                .filter(p -> p.getCatalogId() == catalogId)
-                .forEach(System.out::println);
-
-        if (products.stream().noneMatch(p -> p.getCatalogId() == catalogId)) {
-            System.out.println("Không có sản phẩm nào trong danh mục này.");
+            if (filteredProducts.isEmpty()) {
+                System.out.println("Không có sản phẩm nào trong danh mục này.");
+            } else {
+                filteredProducts.forEach(System.out::println);
+            }
         }
     }
 
@@ -192,11 +182,10 @@ public class CatalogManagement {
             catalogDesignImpl.deleteAndSave(id);
             // Update IDs of remaining catalogs
             catalogDesignImpl.updateCatalogIds();
-            System.out.println("Danh mục " + catalog.getCatalogId() + " được đánh dấu là không hoạt động và lưu vào file.");
+//            System.out.println("Danh mục " + catalog.getCatalogId() + " được đánh dấu là không hoạt động và lưu vào file.");
         } else {
             System.err.println("Không tìm thấy danh mục.");
         }
     }
-
 
 }

@@ -5,25 +5,33 @@ import util.Inputmethods;
 import java.io.Serializable;
 
 public class Catalog implements Serializable {
-    private int id;
-    private String catalogName, description;
-    private boolean catalogIsActive;
+    private int catalogId;
+    private  String catalogName;
+    private String catalogDescription;
+    private boolean catalogIsActive=true;
 
-    public Catalog(int id, String catalogName, boolean catalogStatus) {
-        this.id = id;
+    public Catalog(){}
+    public Catalog(int catalogId, String catalogName, boolean catalogIsActive, String catalogDescription) {
+        this.catalogId = catalogId;
         this.catalogName = catalogName;
-        this.catalogIsActive = true;
+        this.catalogDescription = catalogDescription;
+        this.catalogIsActive = catalogIsActive;
     }
 
-    public Catalog() {
+    public String getDescription() {
+        return catalogDescription;
     }
 
-    public int getId() {
-        return id;
+    public void setDescription(String description) {
+        this.catalogDescription = description;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public int getCatalogId() {
+        return catalogId;
+    }
+
+    public void setCatalogId(int id) {
+        this.catalogId = id;
     }
 
     public String getCatalogName() {
@@ -42,11 +50,19 @@ public class Catalog implements Serializable {
         this.catalogIsActive = catalogIsActive;
     }
 
+    public void inputData() {
+        System.out.print("Nhập tên danh mục: ");
+        this.catalogName = Inputmethods.getString();
+        System.out.print("Nhập mô tả danh mục: ");
+        this.catalogDescription = Inputmethods.getString();
+    }
+
     @Override
     public String toString() {
         return "Catalog{" +
-                "id=" + id +
+                "id=" + catalogId +
                 ", catalogName='" + catalogName + '\'' +
+                ", description='" + catalogDescription + '\'' +
                 ", catalogIsActive=" + catalogIsActive +
                 '}';
     }

@@ -1,11 +1,14 @@
 package run.menu_admin;
 
+import designImpl.CatalogDesignImpl;
 import run.menu_customer.MenuCustomer;
 import util.IOFile;
 import util.Inputmethods;
 
 public class MenuAdmin {
     public static void menuAdmin() {
+//        CatalogManagement catalogManagement = new CatalogManagement();
+
         System.out.println("╔═════════════════════════════════════════════╗");
         System.out.println("║ -----------Chào mừng ADMIN----------        ║");
         System.out.println("╠═════════════════════════════════════════════╣");
@@ -17,10 +20,10 @@ public class MenuAdmin {
         byte choice = Inputmethods.getByte();
         switch (choice) {
             case 1:
-//                CategoryManager.categoryManagementMenu();
+                CatalogManagement.catalogManagementMenu();
                 break;
             case 2:
-//                ProductManager.productManagementMenu();
+                ProductMangement.productManagementMenu();
                 break;
             case 3:
                 CustomerManagement.userManagementMenu();
@@ -34,8 +37,7 @@ public class MenuAdmin {
         }
     }
     public static void logout(){
-        IOFile ioFile = new IOFile();
-        ioFile.deleteCustomerLogin();
+        IOFile.deleteCustomerLogin();
         System.out.println("Đăng xuất thành công. Về lại trạng thái trrước khi đăng nhập.");
         MenuCustomer.menuCustomer();
     }

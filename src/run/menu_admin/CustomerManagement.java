@@ -9,7 +9,7 @@ import java.util.Comparator;
 
 public class CustomerManagement {
   private static final CustomerDesignImpl customerDesignImpl = new CustomerDesignImpl();
-   static IOFile ioFile = new IOFile();
+
     public static void userManagementMenu() {
         while (true) {
             System.out.println("╔════════════════════════════════════╗");
@@ -52,7 +52,10 @@ public class CustomerManagement {
     }
 
     private static void displayAllCustomer() {
-        System.out.println(CustomerDesignImpl.getCustomerList().stream().sorted(Comparator.comparingInt(Customer::getCustomerId)));
+        CustomerDesignImpl.getCustomerList().sort(Comparator.comparingInt(Customer::getCustomerId));
+        for (Customer customer :  CustomerDesignImpl.getCustomerList()) {
+            System.out.println(customer);
+        }
     }
 
     private static void findCustomerById() {

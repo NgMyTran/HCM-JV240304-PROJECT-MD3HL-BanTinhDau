@@ -2,11 +2,9 @@ package entity;
 
 import designImpl.CatalogDesignImpl;
 import util.Inputmethods;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public class Product implements Serializable, Comparable<Product>{
     private static final long serialVersionUID = 1L;
@@ -195,6 +193,8 @@ public class Product implements Serializable, Comparable<Product>{
             }
         }
     }
+
+
         @Override
         public int compareTo (Product o){
             return Double.compare(o.getProductPrice(), this.productPrice);
@@ -202,10 +202,60 @@ public class Product implements Serializable, Comparable<Product>{
 
 
         @Override
-        public String toString () {
-            return "ID: " + productId + " | Name: " + productName + " | Price: " + productPrice +
-                    " | Description: " + description + " | Stock: " + stock +
-                    "\nCatalog's name: " + (catalog != null ? catalog.getCatalogName() : "N/A") ;
-//                    " | Status: " + (status ? "Bán" : "Không bán");
+//        public String toString() {
+//            String formattedPrice = String.format("%,.0f", productPrice);
+//            StringBuilder sb = new StringBuilder();
+//            int width = 80;
+//            sb.append("╔").append(createRepeatingString('═', width - 2)).append("╗\n");
+//            sb.append(String.format("║ %-"+(width-4)+"s ║\n", String.format("STT: %d", productId)));
+//            sb.append(String.format("║ %-"+(width-4)+"s ║\n", String.format("Name: %s", productName)));
+//            sb.append(String.format("║ %-"+(width-4)+"s ║\n", String.format("Price: %s VNĐ", formattedPrice)));
+//            sb.append(String.format("║ %-"+(width-4)+"s ║\n", String.format("Description: %s", description)));
+//            sb.append(String.format("║ %-"+(width-4)+"s ║\n", String.format("Stock: %d", stock)));
+//            sb.append("╚").append(createRepeatingString('═', width - 2)).append("╝\n");
+//
+//            return sb.toString();
+//        }
+//    String createRepeatingString(char ch, int length) {
+//        StringBuilder repeat = new StringBuilder();
+//        for (int i = 0; i < length; i++) {
+//            repeat.append(ch);
+//        }
+//        return repeat.toString();
+//    }
+        public String toString() {
+            String formattedPrice = String.format("%,.0f", productPrice);
+            StringBuilder sb = new StringBuilder();
+            int width = 80;
+            sb.append(createRepeatingString('─', width)).append("\n");
+            sb.append(String.format("%-"+width+"s\n", String.format("ID: %d", productId)));
+            sb.append(String.format("%-"+width+"s\n", String.format("Name: %s", productName)));
+            sb.append(String.format("%-"+width+"s\n", String.format("Price: %s VNĐ", formattedPrice)));
+            sb.append(String.format("%-"+width+"s\n", String.format("Description: %s", description)));
+            sb.append(String.format("%-"+width+"s\n", String.format("Stock: %d", stock)));
+            sb.append(createRepeatingString('─', width)).append("\n");
+            return sb.toString();
         }
+
+    String createRepeatingString(char ch, int length) {
+        StringBuilder repeat = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            repeat.append(ch);
+        }
+        return repeat.toString();
     }
+
+public String toStringForAdmin(){
+        String formattedPrice = String.format("%,.0f", productPrice);
+        StringBuilder sb = new StringBuilder();
+        int width = 80;
+        sb.append(createRepeatingString('─', width)).append("\n");
+        sb.append(String.format("%-"+width+"s\n", String.format("ID: %d", productId)));
+        sb.append(String.format("%-"+width+"s\n", String.format("Name: %s", productName)));
+        sb.append(String.format("%-"+width+"s\n", String.format("Price: %s VNĐ", formattedPrice)));
+        sb.append(String.format("%-"+width+"s\n", String.format("Description: %s", description)));
+        sb.append(String.format("%-"+width+"s\n", String.format("Stock: %d", stock)));
+        sb.append(String.format("%-"+width+"s\n", String.format("Status: %s", status)));
+        return sb.toString();
+    }
+}

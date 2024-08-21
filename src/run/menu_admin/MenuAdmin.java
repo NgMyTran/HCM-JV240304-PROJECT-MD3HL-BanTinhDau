@@ -15,7 +15,8 @@ public class MenuAdmin {
         System.out.println("║ 1. Quản lý danh mục                         ║");
         System.out.println("║ 2. Quản lý sản phẩm                         ║");
         System.out.println("║ 3. Quản lý người dùng                       ║");
-        System.out.println("║ 4. Đăng xuất                                ║");
+        System.out.println("║ 4. Quản lý đơn hàng                         ║");
+        System.out.println("║ 5. Đăng xuất                                ║");
         System.out.println("╚═════════════════════════════════════════════╝");
         byte choice = Inputmethods.getByte();
         switch (choice) {
@@ -29,6 +30,9 @@ public class MenuAdmin {
                 CustomerManagement.userManagementMenu();
                 break;
             case 4:
+                OrderManagement.orderManagementMenu();
+                break;
+            case 5:
                 System.out.println("Đã thoát trang quản lý của ADMIN");
                 logout();
             default:

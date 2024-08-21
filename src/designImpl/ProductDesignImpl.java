@@ -6,6 +6,7 @@ import util.IOFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductDesignImpl implements IDesign<Product, Integer> {
     private static List<Product> productList;
@@ -47,13 +48,17 @@ public class ProductDesignImpl implements IDesign<Product, Integer> {
                 .findFirst()
                 .orElse(null);
     }
-    public Product findByName(String name) {
-        return productList.stream()
-                .filter(product -> product.getProductName().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
+//    public Product findByName(String name) {
+//        return productList.stream()
+//                .filter(product -> product.getProductName().contains(name))
+//                .findFirst()
+//                .orElse(null);
+//    }
+public List<Product> findProByName(String name) {
+    return productList.stream()
+            .filter(product -> product.getProductName().toLowerCase().contains(name.toLowerCase()))
+            .collect(Collectors.toList());
+}
     @Override
     public void delete(Integer id) {
         Product product = findById(id);

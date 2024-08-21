@@ -11,6 +11,7 @@ public class Customer implements Serializable {
     private  String address;
     private String phone;
 //    private LocalDate birthday;
+private boolean gender;// true for male, false for female
     private boolean isBlocked=false;
     private RoleName roleName;
 
@@ -18,10 +19,11 @@ public class Customer implements Serializable {
     public Customer(){
     };
 
-    public Customer(int customerId, String lastName, String firstName, String customerName, String email, String password, String address, String phone , boolean isBlocked, RoleName roleName) {
+    public Customer(int customerId, String lastName, String firstName, boolean gender,String customerName, String email, String password, String address, String phone , boolean isBlocked, RoleName roleName) {
         this.customerId =customerId ;
         this.lastName=lastName;
         this.firstName=firstName;
+        this.gender = gender;
         this.customerName = customerName;
         this.email = email;
         this.password = password;
@@ -30,6 +32,13 @@ public class Customer implements Serializable {
 //        this.birthday = birthday;
         this.isBlocked = isBlocked;
         this.roleName = roleName;
+    }
+    public boolean isGender() {
+        return gender;
+    }
+
+    public void setGender(boolean gender) {
+        this.gender = gender;
     }
 
     public int getCustomerId() {
@@ -130,13 +139,15 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
+        String genderStr = gender ? "Nam" : "Nữ";
         return "User {" +
                 "customerId=" + customerId +
                 ", customerName='" + customerName + '\'' +
+                ", gender='" + genderStr + '\'' +
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
-                ", pass='" + password+ '\'' +
+//                ", pass='" + password+ '\'' +
                 ", isBlock='" + isBlocked + '\'' +
                 " } \n";
     }

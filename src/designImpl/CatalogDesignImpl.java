@@ -8,6 +8,7 @@ import util.IOFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CatalogDesignImpl implements IDesign<Catalog, Integer> {
     private static List<Catalog> catalogList;
@@ -54,13 +55,8 @@ public class CatalogDesignImpl implements IDesign<Catalog, Integer> {
         }
         return null;
     }
-    public Catalog findByName(String name) {
-        for (Catalog c : catalogList) {
-            if (c.getCatalogName().equals(name)) {
-                return c;
-            }
-        }
-        return null;
+    public List<Catalog> findCatalByName(String name) {
+       return catalogList.stream().filter(catalog -> catalog.getCatalogName().contains(name)).collect(Collectors.toList());
     }
 
     @Override

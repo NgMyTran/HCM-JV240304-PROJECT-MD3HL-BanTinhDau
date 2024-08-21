@@ -6,10 +6,11 @@ import entity.Catalog;
 import entity.Product;
 import util.IOFile;
 import util.Inputmethods;
-
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductMangement {
     private static ProductDesignImpl productDesign=new ProductDesignImpl();
@@ -65,9 +66,9 @@ public class ProductMangement {
             System.err.println("Chưa có danh mục nào");
             return;
         }
-        productList.sort(Comparator.comparingInt(Product::getProductId));
+        productList.sort(Comparator.comparingInt(Product::getProductId).reversed());
         for (Product pro : productList) {
-            System.out.println(pro);
+                System.out.println(pro.toStringForAdmin());
         }
     }
 
@@ -81,13 +82,28 @@ public class ProductMangement {
 
         System.out.print("Bạn muốn nhập vào nhiêu sản phẩm: ");
         int n = Inputmethods.getInteger();
+//        for (int i = 0; i < n; i++) {
+//            System.out.println("Sản phẩm thứ " + (i + 1));
+//            Product product = new Product();
+//            product.inputData();// nhiều sản phẩm thêm vào cùng ngày thì sắp xếp theo bảng chữ cái alphabet
+//            productDesign.save(product);
+//            IOFile.writeToFile(ProductDesignImpl.getProductList(),IOFile.PRODUCT_PATH);
+//        }
+        List<Product> newProducts = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             System.out.println("Sản phẩm thứ " + (i + 1));
             Product product = new Product();
             product.inputData();
-            productDesign.save(product);
-            IOFile.writeToFile(ProductDesignImpl.getProductList(),IOFile.PRODUCT_PATH);
+            newProducts.add(product);
         }
+        List<Product> sortedProducts = newProducts.stream()
+                .sorted(Comparator.comparing(Product::getCreatedAt)
+                        .thenComparing(Product::getProductName))
+                .collect(Collectors.toList());
+        for (Product product : sortedProducts) {
+            productDesign.save(product);
+        }
+        IOFile.writeToFile(ProductDesignImpl.getProductList(), IOFile.PRODUCT_PATH);
         System.out.println("Thêm mới product thành công.");
     }
 
@@ -113,7 +129,8 @@ public class ProductMangement {
 //            System.out.println("Sản  " + product.getProductId() + " được đánh dấu là không hoạt động và lưu vào file.");
         }
         else {
-            System.err.println("Không tìm thấy sản .");
+            System.out.println("");
+            System.err.println("Không tìm thấy sản muốn xóa.");
         }
     }
 

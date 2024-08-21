@@ -21,7 +21,6 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
 
     public CustomerDesignImpl() {
         customerList = IOFile.readFromFile(IOFile.CUSTOMER_PATH);
-        System.out.println("du lieu trong file   ");
         System.out.println();
     };
 
@@ -62,7 +61,7 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
         return null;
     }
 
-    public static Customer findByName(String name) {
+    public static Customer findCusByName(String name) {
         for (Customer customer : customerList) {
             if (customer.getCustomerName().equalsIgnoreCase(name)) {
                 return customer;
@@ -115,10 +114,18 @@ public class CustomerDesignImpl implements IDesign<Customer, Integer> {
 public boolean blockCustomer(int cusId) {
     Customer cus = findById(cusId);
     if (cus != null) {
-        cus.setBlocked(true);
-        save(cus);
-        IOFile.writeToFile(customerList, IOFile.CUSTOMER_PATH);
-        return true;
+        final String ADMIN_EMAIL = "admin@gmail.com";
+        if(cus.getEmail().equals(ADMIN_EMAIL)){
+            System.err.println("Admin cannot be bloked");
+            return false;
+        }else if(cus.isBlocked()){
+            System.err.println("Customer is blocked, cannot block again");
+        }else {
+            cus.setBlocked(true);
+            save(cus);
+            IOFile.writeToFile(customerList, IOFile.CUSTOMER_PATH);
+            return true;
+        }
     }
     return false;
 }

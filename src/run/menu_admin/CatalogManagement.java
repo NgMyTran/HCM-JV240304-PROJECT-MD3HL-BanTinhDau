@@ -79,7 +79,7 @@ public class CatalogManagement {
         }
 
         // Hiển thị tất cả các danh mục và số lượng sản phẩm trong từng danh mục
-        catalogs.sort(Comparator.comparingInt(Catalog::getCatalogId));
+        catalogs.sort(Comparator.comparingInt(Catalog::getCatalogId).reversed());
         for (Catalog catalog : catalogs) {
             long productCount = products.stream()
                     .filter(p -> p.getCatalogId() == catalog.getCatalogId())
@@ -104,6 +104,7 @@ public class CatalogManagement {
             }
 
             // Hiển thị sản phẩm thuộc danh mục đã chọn
+            System.out.println("");
             System.out.println("Sản phẩm thuộc danh mục: " + selectedCatalog.getCatalogName());
             List<Product> filteredProducts = products.stream()
                     .filter(p -> p.getCatalogId() == catalogId)
@@ -155,11 +156,11 @@ public class CatalogManagement {
     private static void findCatalogByName() {
         System.out.print("Nhập name danh mục: ");
         String name = Inputmethods.getString();
-        Catalog catalog = catalogDesignImpl.findByName(name);
-        if (catalog != null) {
-            System.out.println(catalog);
+        List<Catalog> catalogs = catalogDesignImpl.findCatalByName(name);
+        if (!catalogs.isEmpty()) {
+            catalogs.forEach(System.out::println);
         } else {
-            System.out.println("Không tìm thấy danh mục với ID này.");
+            System.out.println("Không tìm thấy danh mục với name này.");
         }
     }
 
@@ -180,9 +181,7 @@ public class CatalogManagement {
         Catalog catalog = catalogDesignImpl.findById(id);
         if (catalog != null) {
             catalogDesignImpl.deleteAndSave(id);
-            // Update IDs of remaining catalogs
             catalogDesignImpl.updateCatalogIds();
-//            System.out.println("Danh mục " + catalog.getCatalogId() + " được đánh dấu là không hoạt động và lưu vào file.");
         } else {
             System.err.println("Không tìm thấy danh mục.");
         }

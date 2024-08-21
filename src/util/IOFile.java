@@ -1,4 +1,3 @@
-
 package util;
 
 import entity.Catalog;
@@ -15,6 +14,7 @@ public class IOFile <T>{
     public static final String CUSTOMER_PATH = "src/data/users.txt";
     public static final String CUSTOMERLOGIN_PATH = "src/data/usersLogin.txt";
     public static final String CART_PATH = "src/data/cart.txt";
+    public static final String ORDER_PATH = "src/data/order.txt";
     public static final String DELETED_PRODUCT_PATH = "src/data/deleted-product.txt";
     public static final String DELETED_CATALOG_PATH = "src/data/deleted-catalog.txt";
 
@@ -33,12 +33,14 @@ public class IOFile <T>{
             oos.writeObject(list);
             oos.flush();
         }catch (IOException e){
-            throw  new RuntimeException(e);
+//            System.out.println("catch 1");
+            throw new RuntimeException(e);
         }finally {
             if(fos!=null){
                 try {
                     fos.close();
                 } catch (IOException e) {
+//                    System.out.println("catch 2");
                     throw new RuntimeException(e);
                 }
             }
@@ -46,6 +48,7 @@ public class IOFile <T>{
                 try {
                     oos.close();
                 } catch (IOException e) {
+//                    System.out.println("catch 3");
                     throw new RuntimeException(e);
                 }
             }
@@ -63,23 +66,23 @@ public static <T> List<T> readFromFile(String path) {
             // If the file is the user file, initialize it with a default admin user
             if (path.equals(CUSTOMER_PATH)) {
                 List<Customer> users = new ArrayList<>();
-                Customer adminUser = new Customer(0, "lastname", "1name", "admin", "admin@gmail.com", "admin123", "hcm","03272729", false, RoleName.ADMIN);
+                Customer adminUser = new Customer(0, "lastname", "1name", false,"admin", "admin@gmail.com", "admin123", "hcm","03272729", false, RoleName.ADMIN);
                 users.add(adminUser);
                 writeToFile( users, CUSTOMER_PATH);
             }
         }
-        // Proceed to read from the file
         try (FileInputStream fis = new FileInputStream(path);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
             return (List<T>) ois.readObject();
         } catch (EOFException e) {
-            System.err.println("File is empty.");
+//            System.err.println("File is empty.");
+            System.out.println("");
             return new ArrayList<>(); // Return an empty list instead of null
         }
     } catch (FileNotFoundException e) {
-        System.err.println("Unexpected error: File should have been created.");
+//        System.err.println("Unexpected error: File should have been created.");
     } catch (IOException | ClassNotFoundException e) {
-        e.printStackTrace();
+//        e.printStackTrace();
     }
     return new ArrayList<>(); // Return an empty list instead of null to handle errors better
 }
@@ -93,8 +96,6 @@ public static <T> List<T> readFromFile(String path) {
         File file = new File(CUSTOMERLOGIN_PATH);
         if (!file.exists()) {
             System.err.println("File CustomerLogin không tồn tại");
-            System.out.println("");
-
             return null;
         }
         try (FileInputStream fis = new FileInputStream(file);
@@ -129,9 +130,6 @@ public static <T> List<T> readFromFile(String path) {
     public static String readCusName() {
         File file = new File(CUSTOMERLOGIN_PATH);
         if (!file.exists()) {
-            System.err.println("File không tồn tại");
-            System.out.println("");
-
             return null;
         }
         try (FileInputStream fis = new FileInputStream(file);
@@ -143,6 +141,7 @@ public static <T> List<T> readFromFile(String path) {
         } catch (EOFException e) {
             System.err.println("File không có dữ liệu");
         } catch (ClassNotFoundException | IOException e) {
+            System.out.println("catch 6");
             e.printStackTrace();
         }
         return null;
@@ -182,48 +181,5 @@ public static <T> List<T> readFromFile(String path) {
         }
     }
 
-//
-//public static <T> List<T> readFromFile(String fileName) {
-//    File file = new File(fileName);
-//    FileInputStream fis = null;
-//    ObjectInputStream ois = null;
-//    List<T> list = new ArrayList<>();
-//
-//    try{
-//        file=new File(fileName);
-//        fis=new FileInputStream(file);
-//        ois=new ObjectInputStream(fis);
-//        list=(List<T>) ois.readObject();
-//    } catch (ClassNotFoundException | IOException c){
-//        c.printStackTrace();
-//    } finally {
-//        if(fis!=null){
-//            try {
-//                fis.close();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        if(ois!=null){
-//            try {
-//                ois.close();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
-//    }
-//        return list;
-//}
-
-//    // Writes objects to a file
-//    public static <T> void writeToFile( List<T> data, String path) {
-//        try (FileOutputStream fos = new FileOutputStream(path);
-//             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-//            oos.writeObject(data);
-//            oos.flush();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 }
 

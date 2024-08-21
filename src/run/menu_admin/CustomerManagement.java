@@ -19,7 +19,7 @@ public class CustomerManagement {
             System.out.println("║  2. Tìm customer bằng id           ║");
             System.out.println("║  3. Tìm customer bằng tên          ║");
             System.out.println("║  4. Khóa tài khoản customer        ║");
-            System.out.println("║  5. Mở tài khoản customer          ║");
+            System.out.println("║  5. Mở khóa tài khoản customer     ║");
             System.out.println("║  6. Thoát                          ║");
             System.out.println("╚════════════════════════════════════╝");
             byte choice = Inputmethods.getByte();
@@ -52,7 +52,7 @@ public class CustomerManagement {
     }
 
     private static void displayAllCustomer() {
-        CustomerDesignImpl.getCustomerList().sort(Comparator.comparingInt(Customer::getCustomerId));
+        CustomerDesignImpl.getCustomerList().sort(Comparator.comparingInt(Customer::getCustomerId).reversed());
         for (Customer customer :  CustomerDesignImpl.getCustomerList()) {
             System.out.println(customer);
         }
@@ -72,9 +72,10 @@ public class CustomerManagement {
     private static void findCustomerByName() {
         System.out.print("Nhập tên người dùng: ");
         String name = Inputmethods.getString();
-        Customer user = CustomerDesignImpl.findByName(name);
+        Customer user = CustomerDesignImpl.findCusByName(name);
         if (user != null) {
             System.out.println(user);
+            CustomerManagement.blockCustomer();
         } else {
             System.out.println("Không tìm thấy người dùng với tên này.");
         }
@@ -87,7 +88,8 @@ public class CustomerManagement {
         if (isBlocked) {
             System.out.println("Người dùng đã bị khóa.");
             IOFile.writeToFile(CustomerDesignImpl.getCustomerList(),IOFile.CUSTOMER_PATH);
-        } else {
+        }
+        else {
             System.out.println("Không tìm thấy người dùng với ID này.");
         }
 
